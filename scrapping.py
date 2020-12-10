@@ -88,11 +88,20 @@ def yahoo():
         '//*[@id="Col1-1-HistoricalDataTable-Proxy"]/section/div[1]/div[2]/span[2]/a'
     )
     prefs = {
-        "download.default_directory": "C:/Users/joshuaclew/Downloads/",
-        "download.directory_upgrade": "true",
-        "download.prompt_for_download": "false",
-        "disable-popup-blocking": "true",
+        "browser.download.manager.showWhenStarting": "false",
+        "browser.helperApps.alwaysAsk.force": "false",
+        "browser.download.dir": os.path.abspath("download"),
+        "browser.download.folderList": 2,
+        "browser.helperApps.neverAsk.saveToDisk": "text/csv, application/csv, text/html,application/xhtml+xml,application/xml, application/octet-stream, application/pdf, application/x-msexcel,application/excel,application/x-excel,application/excel,application/x-excel,application/excel, application/vnd.ms- excel,application/x-excel,application/x-msexcel,image/png,image/jpeg,text/html,text/plain,application/msword,application/xml,application/excel,text/x-c",
+        "browser.download.manager.useWindow": "false",
+        "browser.helperApps.useWindow": "false",
+        "browser.helperApps.showAlertonComplete": "false",
+        "browser.helperApps.alertOnEXEOpen": "false",
+        "browser.download.manager.focusWhenStarting": "false",
     }
+
+    firefox_capabilities = webdriver.DesiredCapabilities.FIREFOX
+    firefox_capabilities["marionette"] = True
 
     # options = webdriver.FirefoxOptions()
     # firefox_options = webdriver.FirefoxOptions()
@@ -101,7 +110,8 @@ def yahoo():
     # display = Display(visible=0, size=(800, 600))
     # display.start()
 
-    browser = Browser(browser_name, **executable_path)  # options=firefox_options
+    # driver = webdriver.Firefox(capabilities=firefox_capabilities, firefox_profile=fp)
+    browser = Browser(browser_name, profile_preferences=prefs, **executable_path)
     # web_driver = webdriver.Remote(
     #     "http://localhost:4444/",
     #     desired_capabilities=webdriver.DesiredCapabilities.CHROME)
@@ -121,11 +131,7 @@ def yahoo():
     time_period_max.click()
     historical_data_download = browser.find_by_xpath(historical_data_download_xpath)[0]
     historical_data_download.click()
-
-    # search_company_xpath = '//*[@id="quote-header-info"]/div[2]/div[1]/div[1]/h1'
-    # search_company = browser.find_by_xpath(search_company_xpath)[0]
-    # print(search_company.text.encode('utf8'))
     # browser.close()
 
 
-chrome_example()
+yahoo()

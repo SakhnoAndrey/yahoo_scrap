@@ -2,6 +2,9 @@
 
 Scrapping Yahoo Project
 
+# Describes Splinter
+https://splinter.readthedocs.io/
+
 # Describes dockerfile and docker-compose
 https://github.com/dimmg/dockselpy
 

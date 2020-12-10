@@ -427,3 +427,69 @@ JavaScript error: resource://gre/actors/PictureInPictureChild.jsm, line 114: Inv
 ###!!! [Parent][RunMessage] Error: Channel closing: too late to send/recv, messages will be lost
 
 1607598662076	Marionette	INFO	Stopped listening on port 36185
+1607604965417	geckodriver	INFO	Listening on 127.0.0.1:60003
+1607604966421	mozrunner::runner	INFO	Running command: "/usr/bin/firefox" "--marionette" "-foreground" "-no-remote" "-profile" "/tmp/rust_mozprofilemG2SIB"
+1607604970456	Marionette	INFO	Listening on port 37817
+1607604970540	Marionette	WARN	TLS certificate errors will be ignored for this session
+1607604970667	geckodriver	INFO	Listening on 127.0.0.1:56111
+JavaScript error: resource://gre/modules/URIFixup.jsm, line 281: NS_ERROR_FAILURE: Should pass a non-null uri
+1607604971682	mozrunner::runner	INFO	Running command: "/usr/bin/firefox" "--marionette" "-foreground" "-no-remote" "-profile" "/tmp/rust_mozprofileEHn5Od"
+1607604975465	Marionette	INFO	Listening on port 43267
+1607604975499	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: resource://gre/actors/PictureInPictureChild.jsm, line 114: InvalidStateError: An attempt was made to use an object that is not, or is no longer, usable
+1607605000717	Marionette	INFO	Stopped listening on port 37817
+1607605002470	Marionette	INFO	Stopped listening on port 43267
+1607605002647	geckodriver	INFO	Listening on 127.0.0.1:55651
+1607605002666	mozrunner::runner	INFO	Running command: "/usr/bin/firefox" "--marionette" "-foreground" "-no-remote" "-profile" "/tmp/rust_mozprofileJT6PzU"
+1607605006849	Marionette	INFO	Listening on port 40329
+1607605006882	Marionette	WARN	TLS certificate errors will be ignored for this session
+1607605006995	geckodriver	INFO	Listening on 127.0.0.1:36627
+JavaScript error: resource://gre/modules/URIFixup.jsm, line 281: NS_ERROR_FAILURE: Should pass a non-null uri
+1607605008012	mozrunner::runner	INFO	Running command: "/usr/bin/firefox" "--marionette" "-foreground" "-no-remote" "-profile" "/tmp/rust_mozprofileBCOGkM"
+1607605012078	Marionette	INFO	Listening on port 33945
+1607605012131	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: resource://gre/actors/PictureInPictureChild.jsm, line 114: InvalidStateError: An attempt was made to use an object that is not, or is no longer, usable
+
+###!!! [Parent][RunMessage] Error: Channel closing: too late to send/recv, messages will be lost
+
+1607605035355	Marionette	INFO	Stopped listening on port 33945
+1607605036643	Marionette	INFO	Stopped listening on port 40329
+1607606289236	geckodriver	INFO	Listening on 127.0.0.1:45499
+1607606289254	mozrunner::runner	INFO	Running command: "/usr/bin/firefox" "--marionette" "-foreground" "-no-remote" "-profile" "/tmp/rust_mozprofileliMCV5"
+1607606293314	Marionette	INFO	Listening on port 44331
+1607606293373	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: resource://gre/modules/URIFixup.jsm, line 281: NS_ERROR_FAILURE: Should pass a non-null uri
+JavaScript error: https://s.yimg.com/uc/finance/dd-site/js/DataUtility.1ca56428fd35e460c27a.modern.js, line 1: TypeError: s[0] is undefined
+JavaScript error: resource://gre/actors/PictureInPictureChild.jsm, line 114: InvalidStateError: An attempt was made to use an object that is not, or is no longer, usable
+JavaScript error: resource://gre/actors/PictureInPictureChild.jsm, line 114: InvalidStateError: An attempt was made to use an object that is not, or is no longer, usable
+
+###!!! [Parent][RunMessage] Error: Channel closing: too late to send/recv, messages will be lost
+
+1607606332172	Marionette	INFO	Stopped listening on port 44331
+1607606491710	geckodriver	INFO	Listening on 127.0.0.1:59541
+1607606491727	mozrunner::runner	INFO	Running command: "/usr/bin/firefox" "--marionette" "-foreground" "-no-remote" "-profile" "/tmp/rust_mozprofileXnZ5S6"
+1607606495674	Marionette	INFO	Listening on port 46079
+1607606495744	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: resource://gre/modules/URIFixup.jsm, line 281: NS_ERROR_FAILURE: Should pass a non-null uri
+JavaScript error: resource://gre/actors/PictureInPictureChild.jsm, line 114: InvalidStateError: An attempt was made to use an object that is not, or is no longer, usable
+JavaScript error: resource://gre/actors/PictureInPictureChild.jsm, line 114: InvalidStateError: An attempt was made to use an object that is not, or is no longer, usable
+1607606722643	geckodriver	INFO	Listening on 127.0.0.1:46515
+1607606722664	mozrunner::runner	INFO	Running command: "/usr/bin/firefox" "--marionette" "-foreground" "-no-remote" "-profile" "/tmp/rust_mozprofilejpQrRh"
+1607606727043	Marionette	INFO	Listening on port 39675
+1607606727087	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: resource://gre/modules/URIFixup.jsm, line 281: NS_ERROR_FAILURE: Should pass a non-null uri
+JavaScript error: resource://gre/actors/PictureInPictureChild.jsm, line 114: InvalidStateError: An attempt was made to use an object that is not, or is no longer, usable
+JavaScript error: resource://gre/actors/PictureInPictureChild.jsm, line 114: InvalidStateError: An attempt was made to use an object that is not, or is no longer, usable
+
+###!!! [Parent][RunMessage] Error: Channel closing: too late to send/recv, messages will be lost
+
+1607606788872	Marionette	INFO	Stopped listening on port 39675
+1607607156029	geckodriver	INFO	Listening on 127.0.0.1:34705
+1607607156050	mozrunner::runner	INFO	Running command: "/usr/bin/firefox" "--marionette" "-foreground" "-no-remote" "-profile" "/tmp/rust_mozprofile0YYMlP"
+1607607160308	Marionette	INFO	Listening on port 43745
+1607607160368	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: resource://gre/modules/URIFixup.jsm, line 281: NS_ERROR_FAILURE: Should pass a non-null uri
+JavaScript error: resource://gre/actors/PictureInPictureChild.jsm, line 114: InvalidStateError: An attempt was made to use an object that is not, or is no longer, usable
+
+###!!! [Parent][RunMessage] Error: Channel closing: too late to send/recv, messages will be lost
+
