@@ -35,6 +35,7 @@ def chrome_example():
         command_executor="localhost:4444",
         desired_capabilities=webdriver.DesiredCapabilities.CHROME,
     )
+    browser = webdriver.Chrome(chrome_options=chrome_options)
     logging.info("Initialized chrome browser..")
 
     browser.get(BASE_URL)

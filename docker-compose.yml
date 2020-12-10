@@ -1,24 +1,28 @@
 version: "3.6"
 
 services:
-  selenium-hub:
-    restart: always
-    image: selenium/hub:3.14.0
-    container_name: selenium-hub
+  hub:
+    image: selenium/hub
     ports:
       - "4444:4444"
+    environment:
+      GRID_MAX_SESSION: 16
+      GRID_BROWSER_TIMEOUT: 3000
+      GRID_TIMEOUT: 30
 
   chrome:
-    restart: always
-    image: selenium/node-chrome-debug:3.14.0
-    ports:
-      - "5900-5999:5900"
+    image: selenium/node-chrome
+    container_name: web-automation_chrome
     depends_on:
-      - selenium-hub
+      - hub
     environment:
-      HUB_HOST: selenium-hub
-      HUB_PORT_4444_TCP_ADDR: selenium-hub
+      HUB_PORT_4444_TCP_ADDR: hub
       HUB_PORT_4444_TCP_PORT: 4444
-      DBUS_SESSION_BUS_ADDRESS: "/dev/null"
+      NODE_MAX_SESSION: 20
+      NODE_MAX_INSTANCES: 20
+    volumes:
+      - /dev/shm:/dev/shm
+    ports:
+      - "9011:5900"
     links:
-      - selenium-hub:hub
+      - hub
