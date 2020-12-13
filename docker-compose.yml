@@ -22,7 +22,26 @@ services:
       NODE_MAX_INSTANCES: 20
     volumes:
       - /dev/shm:/dev/shm
+      - ./files:/home/seluser
     ports:
       - "9011:5900"
+    links:
+      - hub
+
+  firefox:
+    image: selenium/node-firefox
+    container_name: web-automation_firefox
+    depends_on:
+      - hub
+    environment:
+      HUB_PORT_4444_TCP_ADDR: hub
+      HUB_PORT_4444_TCP_PORT: 4444
+      NODE_MAX_SESSION: 20
+      NODE_MAX_INSTANCES: 20
+    volumes:
+      - /dev/shm:/dev/shm
+      - ./files:/home/seluser
+    ports:
+      - "9012:5900"
     links:
       - hub
