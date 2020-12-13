@@ -731,3 +731,14 @@ Exiting due to channel error.
 
 ###!!! [Parent][RunMessage] Error: Channel closing: too late to send/recv, messages will be lost
 
+1607858909400	geckodriver	INFO	Listening on 127.0.0.1:48761
+1607858910413	mozrunner::runner	INFO	Running command: "/usr/bin/firefox" "--marionette" "-foreground" "-no-remote" "-profile" "/tmp/rust_mozprofilebs3S0g"
+1607858917015	Marionette	INFO	Listening on port 35161
+1607858917108	Marionette	WARN	TLS certificate errors will be ignored for this session
+JavaScript error: resource://gre/modules/UrlClassifierListManager.jsm, line 691: TypeError: this.tablesData[table] is undefined
+1607858922308	Marionette	INFO	Stopped listening on port 35161
+1607859205174	geckodriver	INFO	Listening on 127.0.0.1:37701
+1607859205230	mozrunner::runner	INFO	Running command: "/usr/bin/firefox" "--marionette" "-foreground" "-no-remote" "-profile" "/tmp/rust_mozprofileS0iXcP"
+1607859212163	Marionette	INFO	Listening on port 36509
+1607859212240	Marionette	WARN	TLS certificate errors will be ignored for this session
+1607859223038	Marionette	INFO	Stopped listening on port 36509
