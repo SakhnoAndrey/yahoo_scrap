@@ -1,13 +1,14 @@
 from dotenv import load_dotenv
 from pathlib import Path
 import os
+import ast
 
 env_path = Path(".") / ".env"
 load_dotenv(dotenv_path=env_path, verbose=True)
 
 
 class ConfigBase:
-    DOCKER_BOOL = os.getenv("DOCKER_BOOL", False)
+    DOCKER_BOOL = ast.literal_eval(os.getenv("DOCKER_BOOL", False))
     TEMP_DOWNLOAD_DIR = (
         os.getenv("TEMP_DOWNLOAD_DIR", os.path.abspath("files"))
         if DOCKER_BOOL

@@ -3,6 +3,7 @@ from selenium import webdriver
 from settings import ConfigBase
 import time
 import logging
+from abc import abstractmethod
 
 
 logging.getLogger().setLevel(logging.INFO)
@@ -12,17 +13,16 @@ BASE_URL = "http://www.example.com/"
 
 
 class BaseScraper:
+    def __init__(self, config):
+        self.config = config
+        pass
 
-    config = ConfigBase()
-    browser = Browser
-
-    def __init__(self):
-        # self.__execute_with_browser__()
-        # self.__execute_with_docker__()
+    @abstractmethod
+    def create_browser(self) -> Browser:
         pass
 
     @staticmethod
-    def _browser_prefs(config: ConfigBase):
+    def _browser_prefs(config):
         firefox_prefs = {
             "browser.download.manager.showWhenStarting": "false",
             "browser.helperApps.alwaysAsk.force": "false",
@@ -49,7 +49,7 @@ class BaseScraper:
             return None
 
     @staticmethod
-    def _browser_options(config: ConfigBase, prefs):
+    def _browser_options(config, prefs):
         # Chrome options
         chrome_options = webdriver.ChromeOptions()
         chrome_options.add_experimental_option("prefs", prefs)
@@ -86,7 +86,7 @@ class BaseScraper:
             return None
 
     @staticmethod
-    def _capabilities_mozilla(config: ConfigBase):
+    def _capabilities_mozilla(config):
         firefox_capabilities = webdriver.DesiredCapabilities.FIREFOX
         firefox_capabilities["marionette"] = True
 
@@ -113,35 +113,36 @@ class BaseScraper:
         }
         return firefox_capabilities
 
-    def feth_data_for(self, browser: Browser(), company_name):
-        browser.driver.set_window_size(*self.config.WINDOW_SIZE)
-        browser.visit(self.config.BASE_URL)
-        search_bar = self.browser.find_by_xpath(self.config.SEARCH_BAR_XPATH)[0]
-        search_bar.fill(company_name)
-        time.sleep(1)
-        search_button = browser.find_by_xpath(self.config.SEARCH_BUTTON_XPATH)[0]
-        search_button.click()
-        historical_link = browser.find_by_xpath(self.config.HISTORICAL_LINK_XPATH)[
-            0
-        ]
-        historical_link.click()
-        time_period = browser.find_by_xpath(self.config.TIME_PERIOD_XPATH)[0]
-        time_period.click()
-        time_period_max = browser.find_by_xpath(self.config.TIME_PERIOD_MAX_XPATH)[
-            0
-        ]
-        time_period_max.click()
-        print(browser.html)
-        historical_data_download = browser.find_by_xpath(
-            self.config.HISTORICAL_DATA_DOWNLOAD_XPATH
-        )[0]
-        historical_data_download.click()
+    def fetch_data_for(self, company_name):
+        with self.create_browser() as browser:
+            browser.driver.set_window_size(*self.config.WINDOW_SIZE)
+            browser.visit(self.config.BASE_URL)
+            search_bar = browser.find_by_xpath(self.config.SEARCH_BAR_XPATH)[0]
+            search_bar.fill(company_name)
+            time.sleep(1)
+            search_button = browser.find_by_xpath(self.config.SEARCH_BUTTON_XPATH)[0]
+            search_button.click()
+            historical_link = browser.find_by_xpath(self.config.HISTORICAL_LINK_XPATH)[
+                0
+            ]
+            historical_link.click()
+            time_period = browser.find_by_xpath(self.config.TIME_PERIOD_XPATH)[0]
+            time_period.click()
+            time_period_max = browser.find_by_xpath(self.config.TIME_PERIOD_MAX_XPATH)[
+                0
+            ]
+            time_period_max.click()
+            print(browser.html)
+            historical_data_download = browser.find_by_xpath(
+                self.config.HISTORICAL_DATA_DOWNLOAD_XPATH
+            )[0]
+            historical_data_download.click()
 
 
 class DockerScraper(BaseScraper):
-    def __init__(self):
+    def create_browser(self) -> Browser:
         remote_server_url = "http://localhost:4444/wd/hub"
-        self.browser = Browser(
+        browser = Browser(
             driver_name="remote",
             browser=self.config.BROWSER_NAME,
             command_executor=remote_server_url,
@@ -150,18 +151,15 @@ class DockerScraper(BaseScraper):
                 config=self.config, prefs=self._browser_prefs(self.config)
             ),
         )
-        super().__init__()
-
-    def __del__(self):
-        self.browser.quit()
+        return browser
 
 
 class BrowserScraper(BaseScraper):
-    def __init__(self):
+    def create_browser(self) -> Browser:
         if self.config.BROWSER_NAME == "firefox":
             firefox_capabilities = webdriver.DesiredCapabilities.FIREFOX
             firefox_capabilities["marionette"] = True
-            self.browser = Browser(
+            browser = Browser(
                 self.config.BROWSER_NAME,
                 # profile_preferences=self.__browser_prefs__(self.browser_name, self.temp_download_dir),
                 options=self._browser_options(
@@ -169,20 +167,17 @@ class BrowserScraper(BaseScraper):
                 ),
                 **self.config.EXECUTABLE_PATH
             )
+            return browser
         else:
             print("Implemented only Firefox")
-        super().__init__()
-
-    def __del__(self):
-        self.browser.quit()
+            return None
 
 
-# YahooFinScrap(search_name_company="DOCU")
-if ConfigBase.DOCKER_BOOL:
-    # scraper = DockerScraper()
-    # scraper.feth_data_for(company_name="DOCU")
-    pass
-else:
-    # scraper = BrowserScraper()
-    print("browser")
-    # scraper.feth_data_for(company_name="DOCU")
+if __name__ == "__main__":
+    config = ConfigBase()
+    company_name = "DOCU"
+    if config.DOCKER_BOOL:
+        scraper = DockerScraper(config)
+    else:
+        scraper = BrowserScraper(config)
+    scraper.fetch_data_for(company_name=company_name)
