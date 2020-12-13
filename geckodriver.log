@@ -698,3 +698,36 @@ JavaScript error: resource://gre/modules/URIFixup.jsm, line 281: NS_ERROR_FAILUR
 ###!!! [Parent][RunMessage] Error: Channel closing: too late to send/recv, messages will be lost
 
 1607847469413	Marionette	INFO	Stopped listening on port 34595
+1607857965803	geckodriver	INFO	Listening on 127.0.0.1:32839
+1607857966812	mozrunner::runner	INFO	Running command: "/usr/bin/firefox" "--marionette" "-foreground" "-no-remote" "-profile" "/tmp/rust_mozprofilegb6XZ9"
+1607857973264	Marionette	INFO	Listening on port 38709
+1607857973292	Marionette	WARN	TLS certificate errors will be ignored for this session
+1607857989640	Marionette	INFO	Stopped listening on port 38709
+1607857993156	geckodriver	INFO	Listening on 127.0.0.1:40505
+1607857994168	mozrunner::runner	INFO	Running command: "/usr/bin/firefox" "--marionette" "-foreground" "-no-remote" "-profile" "/tmp/rust_mozprofileTu1ozi"
+1607858000880	Marionette	INFO	Listening on port 36771
+1607858000940	Marionette	WARN	TLS certificate errors will be ignored for this session
+Exiting due to channel error.
+Exiting due to channel error.
+[GFX1-]: Receive IPC close with reason=AbnormalShutdown
+Exiting due to channel error.
+1607858105651	geckodriver	INFO	Listening on 127.0.0.1:34773
+1607858106665	mozrunner::runner	INFO	Running command: "/usr/bin/firefox" "--marionette" "-foreground" "-no-remote" "-profile" "/tmp/rust_mozprofileYeJxyi"
+1607858113207	Marionette	INFO	Listening on port 46667
+1607858113246	Marionette	WARN	TLS certificate errors will be ignored for this session
+1607858139178	Marionette	INFO	Stopped listening on port 46667
+1607858691407	geckodriver	INFO	Listening on 127.0.0.1:52985
+1607858692421	mozrunner::runner	INFO	Running command: "/usr/bin/firefox" "--marionette" "-foreground" "-no-remote" "-profile" "/tmp/rust_mozprofileX5M1QB"
+1607858698952	Marionette	INFO	Listening on port 45097
+1607858699063	Marionette	WARN	TLS certificate errors will be ignored for this session
+1607858704960	Marionette	INFO	Stopped listening on port 45097
+1607858729805	geckodriver	INFO	Listening on 127.0.0.1:55443
+1607858730834	mozrunner::runner	INFO	Running command: "/usr/bin/firefox" "--marionette" "-foreground" "-no-remote" "-profile" "/tmp/rust_mozprofilekS8knr"
+1607858740144	geckodriver	INFO	Listening on 127.0.0.1:47605
+1607858741158	mozrunner::runner	INFO	Running command: "/usr/bin/firefox" "--marionette" "-foreground" "-no-remote" "-profile" "/tmp/rust_mozprofileSL2LqL"
+1607858748319	Marionette	INFO	Listening on port 44325
+1607858748381	Marionette	WARN	TLS certificate errors will be ignored for this session
+1607858755872	Marionette	INFO	Stopped listening on port 44325
+
+###!!! [Parent][RunMessage] Error: Channel closing: too late to send/recv, messages will be lost
+

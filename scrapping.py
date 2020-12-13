@@ -1,6 +1,6 @@
 from splinter import Browser
 from selenium import webdriver
-import settings
+from settings import ConfigBase
 import time
 import logging
 
@@ -11,33 +11,21 @@ logging.getLogger().setLevel(logging.INFO)
 BASE_URL = "http://www.example.com/"
 
 
-class YahooFinScrap:
-    def __init__(self, search_name_company):
-        self.search_name_company = search_name_company
-        self.__settings_env__(self)
+class BaseScraper:
+
+    config = ConfigBase()
+    browser = Browser()
+
+    def __init__(self):
         # self.__execute_with_browser__()
         self.__execute_with_docker__()
 
     @staticmethod
-    def __settings_env__(self):
-        self.browser_name = settings.BROWSER_NAME
-        self.browser_window_size = settings.WINDOW_SIZE
-        self.executable_path = settings.EXECUTABLE_PATH
-        self.url = settings.BASE_URL
-        self.search_bar_xpath = settings.SEARCH_BAR_XPATH
-        self.search_button_xpath = settings.SEARCH_BUTTON_XPATH
-        self.historical_link_xpath = settings.HISTORICAL_LINK_XPATH
-        self.time_period_xpath = settings.TIME_PERIOD_XPATH
-        self.time_period_max_xpath = settings.TIME_PERIOD_MAX_XPATH
-        self.historical_data_download_xpath = settings.HISTORICAL_DATA_DOWNLOAD_XPATH
-        self.temp_download_dir = settings.TEMP_DOWNLOAD_DIR
-
-    @staticmethod
-    def __browser_prefs__(browser_name, download_dir):
+    def _browser_prefs(config: ConfigBase):
         firefox_prefs = {
             "browser.download.manager.showWhenStarting": "false",
             "browser.helperApps.alwaysAsk.force": "false",
-            "browser.download.dir": download_dir,
+            "browser.download.dir": config.TEMP_DOWNLOAD_DIR,
             "browser.download.folderList": 2,
             "browser.helperApps.neverAsk.saveToDisk": "text/csv, application/csv, text/html,application/xhtml+xml,application/xml, application/octet-stream, application/pdf, application/x-msexcel,application/excel,application/x-excel,application/excel,application/x-excel,application/excel, application/vnd.ms- excel,application/x-excel,application/x-msexcel,image/png,image/jpeg,text/html,text/plain,application/msword,application/xml,application/excel,text/x-c",
             "browser.download.manager.useWindow": "false",
@@ -47,25 +35,23 @@ class YahooFinScrap:
             "browser.download.manager.focusWhenStarting": "false",
         }
         chrome_prefs = {
-            "download.default_directory": download_dir,
+            "download.default_directory": config.TEMP_DOWNLOAD_DIR,
             "download.directory_upgrade": "true",
             "download.prompt_for_download": "false",
             "disable-popup-blocking": "true",
         }
-        if browser_name == "firefox":
+        if config.BROWSER_NAME == "firefox":
             return firefox_prefs
-        elif browser_name == "chrome":
+        elif config.BROWSER_NAME == "chrome":
             return chrome_prefs
         else:
             return None
 
     @staticmethod
-    def __browser_options__(self):
+    def _browser_options(config: ConfigBase, prefs):
         # Chrome options
         chrome_options = webdriver.ChromeOptions()
-        chrome_options.add_experimental_option(
-            "prefs", self.__browser_prefs__(self.browser_name, self.temp_download_dir)
-        )
+        chrome_options.add_experimental_option("prefs", prefs)
         chrome_options.add_argument("--disable-infobars")
 
         # Firefox options
@@ -74,7 +60,7 @@ class YahooFinScrap:
             "browser.files.manager.showWhenStarting", "false"
         )
         firefox_options.set_preference("browser.helperApps.alwaysAsk.force", "false")
-        firefox_options.set_preference("browser.files.dir", self.temp_download_dir)
+        firefox_options.set_preference("browser.files.dir", config.TEMP_DOWNLOAD_DIR)
         firefox_options.set_preference("browser.files.folderList", 2)
         firefox_options.set_preference(
             "browser.helperApps.neverAsk.saveToDisk",
@@ -91,15 +77,15 @@ class YahooFinScrap:
         )
         firefox_options.add_argument("--disable-infobars")
 
-        if self.browser_name == "firefox":
+        if config.BROWSER_NAME == "firefox":
             return firefox_options
-        elif self.browser_name == "chrome":
+        elif config.BROWSER_NAME == "chrome":
             return chrome_options
         else:
             return None
 
     @staticmethod
-    def __capabilities_mozilla__(download_dir):
+    def _capabilities_mozilla(config: ConfigBase):
         firefox_capabilities = webdriver.DesiredCapabilities.FIREFOX
         firefox_capabilities["marionette"] = True
 
@@ -113,7 +99,7 @@ class YahooFinScrap:
                     # 'network.proxy.type': 1,
                     # 'network.proxy.http': '12.157.129.35', 'network.proxy.http_port': 8080,
                     # 'network.proxy.ssl':  '12.157.129.35', 'network.proxy.ssl_port':  8080,
-                    "browser.download.dir": download_dir,
+                    "browser.download.dir": config.TEMP_DOWNLOAD_DIR,
                     "browser.helperApps.neverAsk.saveToDisk": "text/csv, application/csv, text/html,application/xhtml+xml,application/xml, application/octet-stream, application/pdf, application/x-msexcel,application/excel,application/x-excel,application/excel,application/x-excel,application/excel, application/vnd.ms- excel,application/x-excel,application/x-msexcel,image/png,image/jpeg,text/html,text/plain,application/msword,application/xml,application/excel,text/x-c",
                     "browser.download.useDownloadDir": True,
                     "browser.download.manager.showWhenStarting": False,
@@ -126,6 +112,7 @@ class YahooFinScrap:
         }
         return firefox_capabilities
 
+    """
     def __execute_with_browser__(self):
         if self.browser_name == "firefox":
             firefox_capabilities = webdriver.DesiredCapabilities.FIREFOX
@@ -150,27 +137,75 @@ class YahooFinScrap:
             options=self.__browser_options__(self),
         ) as browser:
             self.__yahoo_scrapping__(self, browser)
+    """
 
-    @staticmethod
-    def __yahoo_scrapping__(self, browser):
-        browser.driver.set_window_size(*self.browser_window_size)
-        browser.visit(self.url)
-        search_bar = browser.find_by_xpath(self.search_bar_xpath)[0]
-        search_bar.fill(self.search_name_company)
+    def feth_data_for(self, company_name):
+        self.browser.driver.set_window_size(*self.config.WINDOW_SIZE)
+        self.browser.visit(self.config.BASE_URL)
+        search_bar = self.browser.find_by_xpath(self.config.SEARCH_BAR_XPATH)[0]
+        search_bar.fill(company_name)
         time.sleep(1)
-        search_button = browser.find_by_xpath(self.search_button_xpath)[0]
+        search_button = self.browser.find_by_xpath(self.config.SEARCH_BUTTON_XPATH)[0]
         search_button.click()
-        historical_link = browser.find_by_xpath(self.historical_link_xpath)[0]
+        historical_link = self.browser.find_by_xpath(self.config.HISTORICAL_LINK_XPATH)[
+            0
+        ]
         historical_link.click()
-        time_period = browser.find_by_xpath(self.time_period_xpath)[0]
+        time_period = self.browser.find_by_xpath(self.config.TIME_PERIOD_XPATH)[0]
         time_period.click()
-        time_period_max = browser.find_by_xpath(self.time_period_max_xpath)[0]
+        time_period_max = self.browser.find_by_xpath(self.config.TIME_PERIOD_MAX_XPATH)[
+            0
+        ]
         time_period_max.click()
-        print(browser.html)
-        historical_data_download = browser.find_by_xpath(
-            self.historical_data_download_xpath
+        print(self.browser.html)
+        historical_data_download = self.browser.find_by_xpath(
+            self.config.HISTORICAL_DATA_DOWNLOAD_XPATH
         )[0]
         historical_data_download.click()
 
+    def __del__(self):
+        self.browser.quit()
 
-YahooFinScrap(search_name_company="DOCU")
+
+class DockerScraper(BaseScraper):
+    def __init__(self):
+        remote_server_url = "http://localhost:4444/wd/hub"
+        self.browser = Browser(
+            driver_name="remote",
+            browser=self.config.BROWSER_NAME,
+            command_executor=remote_server_url,
+            keep_alive=True,
+            options=self._browser_options(
+                config=self.config, prefs=self._browser_prefs(self.config)
+            ),
+        )
+        super().__init__()
+
+
+class BrowserScraper(BaseScraper):
+    def __init__(self):
+        if self.config.BROWSER_NAME == "firefox":
+            firefox_capabilities = webdriver.DesiredCapabilities.FIREFOX
+            firefox_capabilities["marionette"] = True
+            self.browser = Browser(
+                self.config.BROWSER_NAME,
+                # profile_preferences=self.__browser_prefs__(self.browser_name, self.temp_download_dir),
+                options=self._browser_options(
+                    config=self.config, prefs=self._browser_prefs(self.config)
+                ),
+                **self.config.EXECUTABLE_PATH
+            )
+        else:
+            print("Implemented only Firefox")
+        super().__init__()
+
+
+# YahooFinScrap(search_name_company="DOCU")
+if ConfigBase.DOCKER_BOOL:
+    # scraper = DockerScraper()
+    # scraper.feth_data_for(company_name="DOCU")
+    pass
+else:
+    # scraper = BrowserScraper()
+    print("browser")
+    # scraper.feth_data_for(company_name="DOCU")
