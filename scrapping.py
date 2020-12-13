@@ -172,7 +172,7 @@ class BrowserScraper(BaseScraper):
         else:
             print("Implemented only Firefox")
         super().__init__()
-    
+
     def __del__(self):
         self.browser.quit()
 
