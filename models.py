@@ -1,4 +1,3 @@
-from scrap_app import scrap_app
 from extensions import db
 
 
