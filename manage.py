@@ -1,4 +1,4 @@
-from scrap_app.application import scrap_app
+from scrap_app.app import scrap_app
 
 
 if __name__ == "__main__":
