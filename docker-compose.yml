@@ -22,7 +22,7 @@ services:
       NODE_MAX_INSTANCES: 20
     volumes:
       - /dev/shm:/dev/shm
-      - ./files:/home/seluser
+#      - browser-downloads:/dev/downloads
     ports:
       - "9011:5900"
     links:
@@ -40,8 +40,15 @@ services:
       NODE_MAX_INSTANCES: 20
     volumes:
       - /dev/shm:/dev/shm
-      - ./files:/home/seluser
     ports:
       - "9012:5900"
     links:
       - hub
+
+volumes:
+  browser-downloads:
+    name: browser-downloads2
+    driver_opts:
+      type: none
+      device: ./files
+      o: bind

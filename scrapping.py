@@ -1,9 +1,13 @@
+from telnetlib import EC
+from selenium.webdriver.support.wait import WebDriverWait
 from splinter import Browser
 from selenium import webdriver
 from settings import ConfigBase
+import os
 import time
 import logging
 from abc import abstractmethod
+from bs4 import BeautifulSoup
 
 
 logging.getLogger().setLevel(logging.INFO)
@@ -15,7 +19,6 @@ BASE_URL = "http://www.example.com/"
 class BaseScraper:
     def __init__(self, config):
         self.config = config
-        pass
 
     @abstractmethod
     def create_browser(self) -> Browser:
@@ -102,16 +105,53 @@ class BaseScraper:
                     # 'network.proxy.ssl':  '12.157.129.35', 'network.proxy.ssl_port':  8080,
                     "browser.download.dir": config.TEMP_DOWNLOAD_DIR,
                     "browser.helperApps.neverAsk.saveToDisk": "text/csv, application/csv, text/html,application/xhtml+xml,application/xml, application/octet-stream, application/pdf, application/x-msexcel,application/excel,application/x-excel,application/excel,application/x-excel,application/excel, application/vnd.ms- excel,application/x-excel,application/x-msexcel,image/png,image/jpeg,text/html,text/plain,application/msword,application/xml,application/excel,text/x-c",
-                    "browser.download.useDownloadDir": True,
-                    "browser.download.manager.showWhenStarting": False,
-                    "browser.download.animateNotifications": False,
-                    "browser.safebrowsing.downloads.enabled": False,
+                    "browser.download.useDownloadDir": "true",
+                    "browser.download.manager.showWhenStarting": "false",
+                    "browser.download.animateNotifications": "false",
+                    "browser.safebrowsing.downloads.enabled": "false",
                     "browser.download.folderList": 2,
-                    "pdfjs.disabled": True,
+                    "pdfjs.disabled": "true",
+                    "browser.helperApps.alwaysAsk.force": "false",
+                    "browser.download.manager.useWindow": "false",
+                    "browser.helperApps.useWindow": "false",
+                    "browser.helperApps.showAlertonComplete": "false",
+                    "browser.helperApps.alertOnEXEOpen": "false",
+                    "browser.download.manager.focusWhenStarting": "false",
                 },
             },
         }
         return firefox_capabilities
+
+    # Create missing downloaded images and goal folders
+    @staticmethod
+    def _create_folder(folder):
+        access_rights = 0o755
+        try:
+            if not os.path.exists(os.path.abspath(folder)):
+                os.makedirs(os.path.abspath(folder), access_rights)
+        except OSError:
+            print("Create directory %s failed" % os.path.abspath(folder))
+
+    # Download html file needed page of site (not uses, only for test)
+    @staticmethod
+    def _html_to_file(self, html):
+        self._create_folder("./files")
+        with open(os.path.join("./files", "orders.html"), "w") as goal_file:
+            soup = BeautifulSoup(html, "lxml")
+            content = soup.prettify(formatter="html5")
+            goal_file.write(content)
+
+    def wait_for_element_by(
+        driver: WebDriver, by: By, identifier: str, delay: int = SELENIUM_WAIT_TIMEOUT
+    ):
+        try:
+            element = WebDriverWait(driver, delay).until(
+                EC.presence_of_element_located((by, identifier))
+            )
+            return element
+        except TimeoutException as ex:
+            print("Loading took too much time!")
+            raise Exception(ex)
 
     def fetch_data_for(self, company_name):
         with self.create_browser() as browser:
@@ -132,44 +172,66 @@ class BaseScraper:
                 0
             ]
             time_period_max.click()
-            print(browser.html)
+            self._html_to_file(self, browser.html)
             historical_data_download = browser.find_by_xpath(
                 self.config.HISTORICAL_DATA_DOWNLOAD_XPATH
             )[0]
             historical_data_download.click()
+            time.sleep(10)
 
 
 class DockerScraper(BaseScraper):
     def create_browser(self) -> Browser:
         remote_server_url = "http://localhost:4444/wd/hub"
-        browser = Browser(
-            driver_name="remote",
-            browser=self.config.BROWSER_NAME,
-            command_executor=remote_server_url,
-            keep_alive=True,
-            options=self._browser_options(
-                config=self.config, prefs=self._browser_prefs(self.config)
-            ),
-        )
-        return browser
+        if self.config.BROWSER_NAME == "firefox":
+            firefox_preferences = self._browser_prefs(config=self.config)
+            browser = Browser(
+                driver_name="remote",
+                browser=self.config.BROWSER_NAME,
+                command_executor=remote_server_url,
+                keep_alive=True,
+                profile_preferences=firefox_preferences,
+            )
+            return browser
+        elif self.config.BROWSER_NAME == "chrome":
+            print("chrome_docker")
+            print(self.config.TEMP_DOWNLOAD_DIR)
+            chrome_options = self._browser_options(
+                config=self.config, prefs=self._browser_prefs(config=self.config)
+            )
+            browser = Browser(
+                driver_name="remote",
+                browser=self.config.BROWSER_NAME,
+                command_executor=remote_server_url,
+                keep_alive=True,
+                options=chrome_options,
+            )
+            return browser
+        else:
+            print("Not implemented to this browser")
+            return None
 
 
 class BrowserScraper(BaseScraper):
     def create_browser(self) -> Browser:
         if self.config.BROWSER_NAME == "firefox":
-            firefox_capabilities = webdriver.DesiredCapabilities.FIREFOX
-            firefox_capabilities["marionette"] = True
+            firefox_preferences = self._browser_prefs(config=self.config)
             browser = Browser(
                 self.config.BROWSER_NAME,
-                # profile_preferences=self.__browser_prefs__(self.browser_name, self.temp_download_dir),
-                options=self._browser_options(
-                    config=self.config, prefs=self._browser_prefs(self.config)
-                ),
+                profile_preferences=firefox_preferences,
                 **self.config.EXECUTABLE_PATH
             )
             return browser
+        elif self.config.BROWSER_NAME == "chrome":
+            print("chrome_browser")
+            print(self.config.TEMP_DOWNLOAD_DIR)
+            chrome_options = self._browser_options(
+                config=self.config, prefs=self._browser_prefs(config=self.config)
+            )
+            browser = Browser(self.config.BROWSER_NAME, options=chrome_options)
+            return browser
         else:
-            print("Implemented only Firefox")
+            print("Not implemented to this browser")
             return None
 
 
