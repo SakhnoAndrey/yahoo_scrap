@@ -1,4 +1,5 @@
-from scrap_app import scrap_app, db
+from scrap_app import scrap_app
+from extensions import db
 
 
 class Company(db.Model):

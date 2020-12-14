@@ -1,11 +1,10 @@
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from extensions import db
 from models import Company
 import json
 
 scrap_app = Flask(__name__)
-db = SQLAlchemy(scrap_app)
 migrate = Migrate(scrap_app, db)
 
 
