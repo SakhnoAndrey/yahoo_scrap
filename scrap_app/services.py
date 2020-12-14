@@ -1,10 +1,11 @@
-def load_last_file_as_json(filename) -> list[dict]:
-    pass
+import json
+from models import Company
+from extensions import db
 
 
-def save_company_data(name: str, data: list[dict]):
+def save_company_data(name: str, data: json):
     company = Company()
-    company.name = ...
+    company.name = name
     company.data = data
     db.session.add(company)
     db.session.commit()
