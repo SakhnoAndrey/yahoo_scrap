@@ -10,6 +10,13 @@ services:
       GRID_BROWSER_TIMEOUT: 3000
       GRID_TIMEOUT: 30
 
+  database:
+    image: "postgres" # use latest official postgres version
+    env_file:
+      - database.env # configure postgres
+    volumes:
+      - database-data:/var/lib/postgresql/data/ # persist data even if container shuts downvolumes:
+
   chrome:
     image: selenium/node-chrome
     container_name: web-automation_chrome
@@ -51,4 +58,10 @@ volumes:
     driver_opts:
       type: none
       device: ./files
+      o: bind
+  database-data: # named volumes can be managed easier using docker-compose
+    name: database-data2
+    driver_opts:
+      type: none
+      device: ./database
       o: bind

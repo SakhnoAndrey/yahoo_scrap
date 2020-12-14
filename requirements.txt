@@ -9,5 +9,12 @@ selenium==3.141.0
 beautifulsoup4==4.9.3
 lxml==4.6.2
 
+# Flask framework
+Flask==1.1.2
+
+# Databases
+flask-sqlalchemy==2.4.4
+psycopg2-binary==2.8.6
+
 # service
 black==20.8b1

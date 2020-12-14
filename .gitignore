@@ -100,5 +100,6 @@ flask_profiler.sql
 # Download files
 /download
 /files
+/database
 
 geckodriver.log
