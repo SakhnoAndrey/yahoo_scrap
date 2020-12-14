@@ -8,9 +8,9 @@ load_dotenv(dotenv_path=env_path, verbose=True)
 
 
 class ConfigBase:
-    SQLALCHEMY_DATABASE_URI = os.environ.get("DATABASE_URL")
+    SQLALCHEMY_DATABASE_URI = os.environ.get("SQLALCHEMY_DATABASE_URI")
     DOCKER_BOOL = ast.literal_eval(os.getenv("DOCKER_BOOL", False))
-
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
     dir = os.getenv("DOWNLOAD_DIR", None)
     if DOCKER_BOOL:
         if dir:

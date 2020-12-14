@@ -1,4 +1,4 @@
-from extensions import db
+from scrap_app.extensions import db
 
 
 class Company(db.Model):
