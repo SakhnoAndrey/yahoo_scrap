@@ -12,6 +12,8 @@ services:
 
   database:
     image: "postgres" # use latest official postgres version
+    ports:
+      - 15432:5432
     environment:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
