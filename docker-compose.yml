@@ -12,10 +12,12 @@ services:
 
   database:
     image: "postgres" # use latest official postgres version
-    env_file:
-      - database.env # configure postgres
-    volumes:
-      - database-data:/var/lib/postgresql/data/ # persist data even if container shuts downvolumes:
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+#    volumes:
+#      - database-data:/var/lib/postgresql/data/ # persist data even if container shuts downvolumes:
 
   chrome:
     image: selenium/node-chrome
