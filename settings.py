@@ -9,11 +9,19 @@ load_dotenv(dotenv_path=env_path, verbose=True)
 
 class ConfigBase:
     DOCKER_BOOL = ast.literal_eval(os.getenv("DOCKER_BOOL", False))
-    TEMP_DOWNLOAD_DIR = (
-        os.getenv("TEMP_DOWNLOAD_DIR", os.path.abspath("files"))
-        if DOCKER_BOOL
-        else os.path.abspath("files")
-    )
+
+    dir = os.getenv("DOWNLOAD_DIR", None)
+    if DOCKER_BOOL:
+        if dir:
+            dir = dir.split(":")
+            DOWNLOAD_DIR_MACHINE = dir[0]
+            DOWNLOAD_DIR_BROWSER = dir[1]
+    else:
+        if dir and os.path.exists(dir) and os.path.isdir(dir):
+            DOWNLOAD_DIR_MACHINE = DOWNLOAD_DIR_BROWSER = dir
+        else:
+            DOWNLOAD_DIR_MACHINE = DOWNLOAD_DIR_BROWSER = os.path.abspath("files")
+
     BROWSER_NAME = os.getenv("BROWSER_NAME", "firefox")
     WINDOW_SIZE = tuple(
         map(int, os.getenv("WINDOW_SIZE", "1280,960").rstrip().split(sep=","))

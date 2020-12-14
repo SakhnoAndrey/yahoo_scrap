@@ -29,7 +29,7 @@ class BaseScraper:
         firefox_prefs = {
             "browser.download.manager.showWhenStarting": "false",
             "browser.helperApps.alwaysAsk.force": "false",
-            "browser.download.dir": config.TEMP_DOWNLOAD_DIR,
+            "browser.download.dir": config.DOWNLOAD_DIR_BROWSER,
             "browser.download.folderList": 2,
             "browser.helperApps.neverAsk.saveToDisk": "text/csv, application/csv, text/html,application/xhtml+xml,application/xml, application/octet-stream, application/pdf, application/x-msexcel,application/excel,application/x-excel,application/excel,application/x-excel,application/excel, application/vnd.ms- excel,application/x-excel,application/x-msexcel,image/png,image/jpeg,text/html,text/plain,application/msword,application/xml,application/excel,text/x-c",
             "browser.download.manager.useWindow": "false",
@@ -39,7 +39,7 @@ class BaseScraper:
             "browser.download.manager.focusWhenStarting": "false",
         }
         chrome_prefs = {
-            "download.default_directory": config.TEMP_DOWNLOAD_DIR,
+            "download.default_directory": config.DOWNLOAD_DIR_BROWSER,
             "download.directory_upgrade": "true",
             "download.prompt_for_download": "false",
             "disable-popup-blocking": "true",
@@ -64,7 +64,7 @@ class BaseScraper:
             "browser.files.manager.showWhenStarting", "false"
         )
         firefox_options.set_preference("browser.helperApps.alwaysAsk.force", "false")
-        firefox_options.set_preference("browser.files.dir", config.TEMP_DOWNLOAD_DIR)
+        firefox_options.set_preference("browser.files.dir", config.DOWNLOAD_DIR_BROWSER)
         firefox_options.set_preference("browser.files.folderList", 2)
         firefox_options.set_preference(
             "browser.helperApps.neverAsk.saveToDisk",
@@ -103,7 +103,7 @@ class BaseScraper:
                     # 'network.proxy.type': 1,
                     # 'network.proxy.http': '12.157.129.35', 'network.proxy.http_port': 8080,
                     # 'network.proxy.ssl':  '12.157.129.35', 'network.proxy.ssl_port':  8080,
-                    "browser.download.dir": config.TEMP_DOWNLOAD_DIR,
+                    "browser.download.dir": config.DOWNLOAD_DIR_BROWSER,
                     "browser.helperApps.neverAsk.saveToDisk": "text/csv, application/csv, text/html,application/xhtml+xml,application/xml, application/octet-stream, application/pdf, application/x-msexcel,application/excel,application/x-excel,application/excel,application/x-excel,application/excel, application/vnd.ms- excel,application/x-excel,application/x-msexcel,image/png,image/jpeg,text/html,text/plain,application/msword,application/xml,application/excel,text/x-c",
                     "browser.download.useDownloadDir": "true",
                     "browser.download.manager.showWhenStarting": "false",
@@ -141,17 +141,17 @@ class BaseScraper:
             content = soup.prettify(formatter="html5")
             goal_file.write(content)
 
-    def wait_for_element_by(
-        driver: WebDriver, by: By, identifier: str, delay: int = SELENIUM_WAIT_TIMEOUT
-    ):
-        try:
-            element = WebDriverWait(driver, delay).until(
-                EC.presence_of_element_located((by, identifier))
-            )
-            return element
-        except TimeoutException as ex:
-            print("Loading took too much time!")
-            raise Exception(ex)
+    # def wait_for_element_by(
+    #     driver: WebDriver, by: By, identifier: str, delay: int = SELENIUM_WAIT_TIMEOUT
+    # ):
+    #     try:
+    #         element = WebDriverWait(driver, delay).until(
+    #             EC.presence_of_element_located((by, identifier))
+    #         )
+    #         return element
+    #     except TimeoutException as ex:
+    #         print("Loading took too much time!")
+    #         raise Exception(ex)
 
     def fetch_data_for(self, company_name):
         with self.create_browser() as browser:
@@ -224,7 +224,7 @@ class BrowserScraper(BaseScraper):
             return browser
         elif self.config.BROWSER_NAME == "chrome":
             print("chrome_browser")
-            print(self.config.TEMP_DOWNLOAD_DIR)
+            print(self.config.DOWNLOAD_DIR_BROWSER)
             chrome_options = self._browser_options(
                 config=self.config, prefs=self._browser_prefs(config=self.config)
             )
