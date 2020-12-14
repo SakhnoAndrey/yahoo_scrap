@@ -7,7 +7,7 @@ import os
 import glob
 import time
 import logging
-import csv
+import csv, json
 from abc import abstractmethod
 from bs4 import BeautifulSoup
 
@@ -155,7 +155,7 @@ class BaseScraper:
     #         print("Loading took too much time!")
     #         raise Exception(ex)
 
-    def fetch_data_for(self, company_name):
+    def fetch_data_for(self, company_name) -> json:
         with self.create_browser() as browser:
             browser.driver.set_window_size(*self.config.WINDOW_SIZE)
             browser.visit(self.config.BASE_URL)
@@ -180,15 +180,16 @@ class BaseScraper:
             )[0]
             historical_data_download.click()
             time.sleep(10)
+            return self._last_csv_to_json()
 
-    def parse_csv(self):
+    def _last_csv_to_json(self) -> json:
         list_files = glob.glob(os.path.join(self.config.DOWNLOAD_DIR_MACHINE, "*.csv"))
         latest_file = max(list_files, key=os.path.getctime)
         with open(latest_file, "r") as f:
-            pass
-            # reader = csv.reader(f)
-            # for row in reader:
-            #     print(" ".join(row))
+            csv_reader = csv.DictReader(f)
+            json_array = [row for row in csv_reader]
+            json_string = json.dumps(json_array, indent=4)
+            return json_string
 
 
 class DockerScraper(BaseScraper):
@@ -252,5 +253,4 @@ if __name__ == "__main__":
         scraper = DockerScraper(config)
     else:
         scraper = BrowserScraper(config)
-    # scraper.fetch_data_for(company_name=company_name)
-    scraper.parse_csv()
+    scraper.fetch_data_for(company_name=company_name)
