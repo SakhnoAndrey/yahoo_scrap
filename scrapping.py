@@ -238,7 +238,7 @@ class BrowserScraper(BaseScraper):
 if __name__ == "__main__":
     config = ConfigBase()
     company_name = "DOCU"
-    if config.DOCKER_BOOL:
+    if config.SCRAPPER_TYPE_NAME.lower() == "docker":
         scraper = DockerScraper(config)
     else:
         scraper = BrowserScraper(config)

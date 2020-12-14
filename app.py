@@ -16,3 +16,12 @@ def get_company_data(name):
     # data = Company.query.filter(Company.name == name).first()
     # return json.dumps(data)
     return name
+
+
+@scrap_app.shell_context_processor
+def make_shell_context():
+    return {"db": db, "Company": Company}
+
+
+if __name__ == "__main__":
+    scrap_app.run("127.0.0.1", "5000", debug=False)

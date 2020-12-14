@@ -1,27 +1,20 @@
 from dotenv import load_dotenv
-from pathlib import Path
 import os
-import ast
 
-env_path = Path(".") / ".env"
-load_dotenv(dotenv_path=env_path, verbose=True)
+load_dotenv()
 
 
 class ConfigBase:
     SQLALCHEMY_DATABASE_URI = os.environ.get("SQLALCHEMY_DATABASE_URI")
-    DOCKER_BOOL = ast.literal_eval(os.getenv("DOCKER_BOOL", False))
+    SCRAPPER_TYPE_NAME = os.getenv("SCRAPPER_TYPE_NAME", "browser")
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     dir = os.getenv("DOWNLOAD_DIR", None)
-    if DOCKER_BOOL:
-        if dir:
-            dir = dir.split(":")
-            DOWNLOAD_DIR_MACHINE = dir[0]
-            DOWNLOAD_DIR_BROWSER = dir[1]
+    if SCRAPPER_TYPE_NAME == "docker" and dir:
+        DOWNLOAD_DIR_MACHINE, DOWNLOAD_DIR_BROWSER = dir.split(":")
+    elif dir and os.path.exists(dir) and os.path.isdir(dir):
+        DOWNLOAD_DIR_MACHINE = DOWNLOAD_DIR_BROWSER = dir
     else:
-        if dir and os.path.exists(dir) and os.path.isdir(dir):
-            DOWNLOAD_DIR_MACHINE = DOWNLOAD_DIR_BROWSER = dir
-        else:
-            DOWNLOAD_DIR_MACHINE = DOWNLOAD_DIR_BROWSER = os.path.abspath("files")
+        DOWNLOAD_DIR_MACHINE = DOWNLOAD_DIR_BROWSER = os.path.abspath("files")
 
     BROWSER_NAME = os.getenv("BROWSER_NAME", "firefox")
     WINDOW_SIZE = tuple(
