@@ -8,7 +8,7 @@ scrap_app = Flask(__name__)
 migrate = Migrate(scrap_app, db)
 
 
-@scrap_app.route("/company/{name}")
+@scrap_app.route("/company/<name>")
 def get_data(name):
     # data = Company.query.filter(Company.name == name).first()
     # return json.dumps(data)
