@@ -246,11 +246,11 @@ class BrowserScraper(BaseScraper):
             return None
 
 
-if __name__ == "__main__":
-    config = ConfigBase()
-    company_name = "DOCU"
-    if config.SCRAPPER_TYPE_NAME.lower() == "docker":
-        scraper = DockerScraper(config)
-    else:
-        scraper = BrowserScraper(config)
-    scraper.fetch_data_for(company_name=company_name)
+# if __name__ == "__main__":
+#     config = ConfigBase()
+#     company_name = "DOCU"
+#     if config.SCRAPPER_TYPE_NAME.lower() == "docker":
+#         scraper = DockerScraper(config)
+#     else:
+#         scraper = BrowserScraper(config)
+#     scraper.fetch_data_for(company_name=company_name)

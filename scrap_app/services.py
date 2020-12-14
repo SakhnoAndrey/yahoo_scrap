@@ -1,6 +1,6 @@
 import json
-from models import Company
-from extensions import db
+from scrap_app.models import Company
+from scrap_app.extensions import db
 
 
 def save_company_data(name: str, data: json):
