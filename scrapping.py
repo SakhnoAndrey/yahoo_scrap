@@ -4,8 +4,10 @@ from splinter import Browser
 from selenium import webdriver
 from settings import ConfigBase
 import os
+import glob
 import time
 import logging
+import csv
 from abc import abstractmethod
 from bs4 import BeautifulSoup
 
@@ -179,6 +181,15 @@ class BaseScraper:
             historical_data_download.click()
             time.sleep(10)
 
+    def parse_csv(self):
+        list_files = glob.glob(os.path.join(self.config.DOWNLOAD_DIR_MACHINE, "*.csv"))
+        latest_file = max(list_files, key=os.path.getctime)
+        with open(latest_file, "r") as f:
+            pass
+            # reader = csv.reader(f)
+            # for row in reader:
+            #     print(" ".join(row))
+
 
 class DockerScraper(BaseScraper):
     def create_browser(self) -> Browser:
@@ -195,7 +206,6 @@ class DockerScraper(BaseScraper):
             return browser
         elif self.config.BROWSER_NAME == "chrome":
             print("chrome_docker")
-            print(self.config.TEMP_DOWNLOAD_DIR)
             chrome_options = self._browser_options(
                 config=self.config, prefs=self._browser_prefs(config=self.config)
             )
@@ -242,4 +252,5 @@ if __name__ == "__main__":
         scraper = DockerScraper(config)
     else:
         scraper = BrowserScraper(config)
-    scraper.fetch_data_for(company_name=company_name)
+    # scraper.fetch_data_for(company_name=company_name)
+    scraper.parse_csv()
