@@ -5,11 +5,6 @@ from datetime import datetime
 
 
 def save_company_data(name: str, data: json):
-    # company = Company()
-    # company.name = name
-    # company.data = data
-    # db.session.add(company)
-    # db.session.commit()
     company = Company.query.filter_by(name=name).first()
     if company:
         company.data = data

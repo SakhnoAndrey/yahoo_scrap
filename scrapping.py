@@ -9,9 +9,7 @@ from abc import abstractmethod
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from splinter.exceptions import ElementDoesNotExist
-
 from app import create_app
-from scrap_app.extensions import db
 from scrap_app.services import save_company_data
 from settings import ConfigBase
 
@@ -105,9 +103,6 @@ class BaseScraper:
             "moz:firefoxOptions": {
                 "args": [],
                 "prefs": {
-                    # 'network.proxy.type': 1,
-                    # 'network.proxy.http': '12.157.129.35', 'network.proxy.http_port': 8080,
-                    # 'network.proxy.ssl':  '12.157.129.35', 'network.proxy.ssl_port':  8080,
                     "browser.download.dir": config.DOWNLOAD_DIR_BROWSER,
                     "browser.helperApps.neverAsk.saveToDisk": "text/csv, application/csv, text/html,application/xhtml+xml,application/xml, application/octet-stream, application/pdf, application/x-msexcel,application/excel,application/x-excel,application/excel,application/x-excel,application/excel, application/vnd.ms- excel,application/x-excel,application/x-msexcel,image/png,image/jpeg,text/html,text/plain,application/msword,application/xml,application/excel,text/x-c",
                     "browser.download.useDownloadDir": "true",
@@ -145,18 +140,6 @@ class BaseScraper:
             soup = BeautifulSoup(html, "lxml")
             content = soup.prettify(formatter="html5")
             goal_file.write(content)
-
-    # def wait_for_element_by(
-    #     driver: WebDriver, by: By, identifier: str, delay: int = SELENIUM_WAIT_TIMEOUT
-    # ):
-    #     try:
-    #         element = WebDriverWait(driver, delay).until(
-    #             EC.presence_of_element_located((by, identifier))
-    #         )
-    #         return element
-    #     except TimeoutException as ex:
-    #         print("Loading took too much time!")
-    #         raise Exception(ex)
 
     def fetch_data_for(self, company_names):
         with self.create_browser() as browser:

@@ -7,7 +7,7 @@ load_dotenv()
 class ConfigBase:
     COMPANY_NAMES = ("PD", "ZUO", "PINS", "ZM", "PVTL", "DOCU", "CLDR", "RUN")
     SQLALCHEMY_DATABASE_URI = os.environ.get("SQLALCHEMY_DATABASE_URI")
-    SCRAPPER_TYPE_NAME = os.getenv("SCRAPPER_TYPE_NAME", "browser")
+    SCRAPPER_TYPE_NAME = os.getenv("SCRAPPER_TYPE_NAME", "browser").lower()
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     dir = os.getenv("DOWNLOAD_DIR", None)
     if SCRAPPER_TYPE_NAME == "docker" and dir:
@@ -17,7 +17,7 @@ class ConfigBase:
     else:
         DOWNLOAD_DIR_MACHINE = DOWNLOAD_DIR_BROWSER = os.path.abspath("files")
 
-    BROWSER_NAME = os.getenv("BROWSER_NAME", "firefox")
+    BROWSER_NAME = os.getenv("BROWSER_NAME", "firefox").lower()
     WINDOW_SIZE = tuple(
         map(int, os.getenv("WINDOW_SIZE", "1280,960").rstrip().split(sep=","))
     )
