@@ -1,11 +1,10 @@
 from flask import Blueprint
 from scrap_app import services
-from app import scrap_app
 
 bp_rest = Blueprint("bp_rest", __name__)
 
 
-@scrap_app.route("/company/<name>")
+@bp_rest.route("/company/<name>")
 def get_company_data(name):
     # if config.SCRAPPER_TYPE_NAME.lower() == "docker":
     #     scraper = DockerScraper(config)
