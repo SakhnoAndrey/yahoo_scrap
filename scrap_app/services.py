@@ -29,4 +29,4 @@ def get_company_data(name: str):
     if company:
         return company.data
     else:
-        return "Data not found"
+        return "Company not found"

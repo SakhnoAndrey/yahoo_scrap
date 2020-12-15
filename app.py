@@ -13,10 +13,3 @@ def create_app() -> Flask:
     migrate = Migrate(application, db)
     application.register_blueprint(bp_rest)
     return application
-
-
-scrap_app = create_app()
-
-
-if __name__ == "__main__":
-    scrap_app.run("127.0.0.1", "5000", debug=False)

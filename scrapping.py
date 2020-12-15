@@ -8,11 +8,12 @@ import time
 from abc import abstractmethod
 from bs4 import BeautifulSoup
 from selenium import webdriver
-from splinter import Browser
+from splinter.exceptions import ElementDoesNotExist
+
+from app import create_app
 from scrap_app.extensions import db
 from scrap_app.services import save_company_data
 from settings import ConfigBase
-from app import scrap_app
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -161,6 +162,7 @@ class BaseScraper:
         with self.create_browser() as browser:
             browser.driver.set_window_size(*self.config.WINDOW_SIZE)
             for company_name in company_names:
+                print("Scraping data for company {0}".format(company_name))
                 browser.visit(self.config.BASE_URL)
                 search_bar = browser.find_by_xpath(self.config.SEARCH_BAR_XPATH)[0]
                 search_bar.fill(company_name)
@@ -169,24 +171,30 @@ class BaseScraper:
                     0
                 ]
                 search_button.click()
-                historical_link = browser.find_by_xpath(
-                    self.config.HISTORICAL_LINK_XPATH
-                )[0]
-                historical_link.click()
-                time_period = browser.find_by_xpath(self.config.TIME_PERIOD_XPATH)[0]
-                time_period.click()
-                time_period_max = browser.find_by_xpath(
-                    self.config.TIME_PERIOD_MAX_XPATH
-                )[0]
-                time_period_max.click()
-                self._html_to_file(self, browser.html)
-                historical_data_download = browser.find_by_xpath(
-                    self.config.HISTORICAL_DATA_DOWNLOAD_XPATH
-                )[0]
-                historical_data_download.click()
-                time.sleep(10)
-                json_data = self._last_csv_to_json()
-                save_company_data(name=company_name, data=json_data)
+                try:
+                    historical_link = browser.find_by_xpath(
+                        self.config.HISTORICAL_LINK_XPATH
+                    )[0]
+                    historical_link.click()
+                    time_period = browser.find_by_xpath(self.config.TIME_PERIOD_XPATH)[
+                        0
+                    ]
+                    time_period.click()
+                    time_period_max = browser.find_by_xpath(
+                        self.config.TIME_PERIOD_MAX_XPATH
+                    )[0]
+                    time_period_max.click()
+                    self._html_to_file(self, browser.html)
+                    historical_data_download = browser.find_by_xpath(
+                        self.config.HISTORICAL_DATA_DOWNLOAD_XPATH
+                    )[0]
+                    historical_data_download.click()
+                    time.sleep(20)
+                    json_data = self._last_csv_to_json()
+                    save_company_data(name=company_name, data=json_data)
+                    print("Download data file for company {0}".format(company_name))
+                except ElementDoesNotExist:
+                    print("Company {0} not found".format(company_name))
 
     def _last_csv_to_json(self) -> json:
         list_files = glob.glob(os.path.join(self.config.DOWNLOAD_DIR_MACHINE, "*.csv"))
@@ -212,7 +220,6 @@ class DockerScraper(BaseScraper):
             )
             return browser
         elif self.config.BROWSER_NAME == "chrome":
-            print("chrome_docker")
             chrome_options = self._browser_options(
                 config=self.config, prefs=self._browser_prefs(config=self.config)
             )
@@ -240,8 +247,6 @@ class BrowserScraper(BaseScraper):
             )
             return browser
         elif self.config.BROWSER_NAME == "chrome":
-            print("chrome_browser")
-            print(self.config.DOWNLOAD_DIR_BROWSER)
             chrome_options = self._browser_options(
                 config=self.config, prefs=self._browser_prefs(config=self.config)
             )
@@ -254,10 +259,14 @@ class BrowserScraper(BaseScraper):
 
 if __name__ == "__main__":
     config = ConfigBase()
-    # scrap_app.config.from_object(config)
-    # db.init_app(scrap_app)
+    print(
+        "Scraping with {0}.{1}".format(config.SCRAPPER_TYPE_NAME, config.BROWSER_NAME)
+    )
     if config.SCRAPPER_TYPE_NAME.lower() == "docker":
         scraper = DockerScraper(config)
     else:
         scraper = BrowserScraper(config)
-    scraper.fetch_data_for(company_names=config.COMPANY_NAMES)
+    scrap_app = create_app()
+    with scrap_app.app_context():
+        scraper.fetch_data_for(company_names=config.COMPANY_NAMES)
+    print("Scraping done")
