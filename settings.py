@@ -5,6 +5,7 @@ load_dotenv()
 
 
 class ConfigBase:
+    COMPANY_NAMES = ("PD", "ZUO", "PINS", "ZM", "PVTL", "DOCU", "CLDR", "RUN")
     SQLALCHEMY_DATABASE_URI = os.environ.get("SQLALCHEMY_DATABASE_URI")
     SCRAPPER_TYPE_NAME = os.getenv("SCRAPPER_TYPE_NAME", "browser")
     SQLALCHEMY_TRACK_MODIFICATIONS = False

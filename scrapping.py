@@ -3,6 +3,7 @@ from selenium.webdriver.support.wait import WebDriverWait
 from splinter import Browser
 from selenium import webdriver
 from settings import ConfigBase
+from flask import Flask
 import os
 import glob
 import time
@@ -10,6 +11,8 @@ import logging
 import csv, json
 from abc import abstractmethod
 from bs4 import BeautifulSoup
+from scrap_app.extensions import db
+from scrap_app.services import save_company_data
 
 
 logging.getLogger().setLevel(logging.INFO)
@@ -155,32 +158,36 @@ class BaseScraper:
     #         print("Loading took too much time!")
     #         raise Exception(ex)
 
-    def fetch_data_for(self, company_name) -> json:
+    def fetch_data_for(self, company_names):
         with self.create_browser() as browser:
             browser.driver.set_window_size(*self.config.WINDOW_SIZE)
-            browser.visit(self.config.BASE_URL)
-            search_bar = browser.find_by_xpath(self.config.SEARCH_BAR_XPATH)[0]
-            search_bar.fill(company_name)
-            time.sleep(1)
-            search_button = browser.find_by_xpath(self.config.SEARCH_BUTTON_XPATH)[0]
-            search_button.click()
-            historical_link = browser.find_by_xpath(self.config.HISTORICAL_LINK_XPATH)[
-                0
-            ]
-            historical_link.click()
-            time_period = browser.find_by_xpath(self.config.TIME_PERIOD_XPATH)[0]
-            time_period.click()
-            time_period_max = browser.find_by_xpath(self.config.TIME_PERIOD_MAX_XPATH)[
-                0
-            ]
-            time_period_max.click()
-            self._html_to_file(self, browser.html)
-            historical_data_download = browser.find_by_xpath(
-                self.config.HISTORICAL_DATA_DOWNLOAD_XPATH
-            )[0]
-            historical_data_download.click()
-            time.sleep(10)
-            return self._last_csv_to_json()
+            for company_name in company_names:
+                browser.visit(self.config.BASE_URL)
+                search_bar = browser.find_by_xpath(self.config.SEARCH_BAR_XPATH)[0]
+                search_bar.fill(company_name)
+                time.sleep(1)
+                search_button = browser.find_by_xpath(self.config.SEARCH_BUTTON_XPATH)[
+                    0
+                ]
+                search_button.click()
+                historical_link = browser.find_by_xpath(
+                    self.config.HISTORICAL_LINK_XPATH
+                )[0]
+                historical_link.click()
+                time_period = browser.find_by_xpath(self.config.TIME_PERIOD_XPATH)[0]
+                time_period.click()
+                time_period_max = browser.find_by_xpath(
+                    self.config.TIME_PERIOD_MAX_XPATH
+                )[0]
+                time_period_max.click()
+                self._html_to_file(self, browser.html)
+                historical_data_download = browser.find_by_xpath(
+                    self.config.HISTORICAL_DATA_DOWNLOAD_XPATH
+                )[0]
+                historical_data_download.click()
+                time.sleep(10)
+                json_data = self._last_csv_to_json()
+                save_company_data(name=company_name, data=json_data)
 
     def _last_csv_to_json(self) -> json:
         list_files = glob.glob(os.path.join(self.config.DOWNLOAD_DIR_MACHINE, "*.csv"))
@@ -246,11 +253,13 @@ class BrowserScraper(BaseScraper):
             return None
 
 
-# if __name__ == "__main__":
-#     config = ConfigBase()
-#     company_name = "DOCU"
-#     if config.SCRAPPER_TYPE_NAME.lower() == "docker":
-#         scraper = DockerScraper(config)
-#     else:
-#         scraper = BrowserScraper(config)
-#     scraper.fetch_data_for(company_name=company_name)
+if __name__ == "__main__":
+    config = ConfigBase()
+    scrap_app = Flask("manage")
+    scrap_app.config.from_object(config)
+    db.init_app(scrap_app)
+    if config.SCRAPPER_TYPE_NAME.lower() == "docker":
+        scraper = DockerScraper(config)
+    else:
+        scraper = BrowserScraper(config)
+    scraper.fetch_data_for(company_names=config.COMPANY_NAMES)
