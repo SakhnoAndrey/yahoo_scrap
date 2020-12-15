@@ -15,12 +15,13 @@ migrate = Migrate(scrap_app, db)
 
 @scrap_app.route("/company/<name>")
 def get_company_data(name):
-    if config.SCRAPPER_TYPE_NAME.lower() == "docker":
-        scraper = DockerScraper(config)
-    else:
-        scraper = BrowserScraper(config)
-    json_data = scraper.fetch_data_for(company_name=name)
-    save_company_data(name=name, data=json_data)
+    # if config.SCRAPPER_TYPE_NAME.lower() == "docker":
+    #     scraper = DockerScraper(config)
+    # else:
+    #     scraper = BrowserScraper(config)
+    # json_data = scraper.fetch_data_for(company_name=name)
+    # save_company_data(name=name, data=json_data)
+    return get_company_data(name=name)
 
 
 @scrap_app.shell_context_processor
