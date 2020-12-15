@@ -2,26 +2,21 @@ from flask import Flask
 from flask_migrate import Migrate
 from scrap_app.extensions import db
 from settings import ConfigBase
-from scrapping import DockerScraper, BrowserScraper
 from scrap_app.models import Company
-import scrap_app.services as services
-
-scrap_app = Flask(__name__)
-config = ConfigBase()
-scrap_app.config.from_object(config)
-db.init_app(scrap_app)
-migrate = Migrate(scrap_app, db)
+from blueprints import bp_rest
 
 
-@scrap_app.route("/company/<name>")
-def get_company_data(name):
-    # if config.SCRAPPER_TYPE_NAME.lower() == "docker":
-    #     scraper = DockerScraper(config)
-    # else:
-    #     scraper = BrowserScraper(config)
-    # json_data = scraper.fetch_data_for(company_name=name)
-    # save_company_data(name=name, data=json_data)
-    return services.get_company_data(name=name)
+def create_app() -> Flask:
+    app = Flask(__name__)
+    config = ConfigBase()
+    scrap_app.config.from_object(config)
+    db.init_app(scrap_app)
+    migrate = Migrate(scrap_app, db)
+    scrap_app.register_blueprint(bp_rest)
+    return app
+
+
+scrap_app = create_app()
 
 
 @scrap_app.shell_context_processor

@@ -1,19 +1,18 @@
-from telnetlib import EC
-from selenium.webdriver.support.wait import WebDriverWait
 from splinter import Browser
-from selenium import webdriver
-from settings import ConfigBase
-from flask import Flask
-import os
+import csv
 import glob
-import time
+import json
 import logging
-import csv, json
+import os
+import time
 from abc import abstractmethod
 from bs4 import BeautifulSoup
+from selenium import webdriver
+from splinter import Browser
 from scrap_app.extensions import db
 from scrap_app.services import save_company_data
-
+from settings import ConfigBase
+from app import scrap_app
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -255,7 +254,6 @@ class BrowserScraper(BaseScraper):
 
 if __name__ == "__main__":
     config = ConfigBase()
-    scrap_app = Flask("manage")
     scrap_app.config.from_object(config)
     db.init_app(scrap_app)
     if config.SCRAPPER_TYPE_NAME.lower() == "docker":
