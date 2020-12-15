@@ -1,10 +1,9 @@
-import json
-from scrap_app.models import Company
-from scrap_app.extensions import db
+from .models import Company
+from .extensions import db
 from datetime import datetime
 
 
-def save_company_data(name: str, data: json):
+def save_company_data(name: str, data: list):
     name = name.upper()
     company = Company.query.filter_by(name=name).first()
     if company:

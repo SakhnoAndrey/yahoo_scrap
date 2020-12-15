@@ -2,21 +2,13 @@ from splinter import Browser
 import csv
 import glob
 import json
-import logging
 import os
 import time
 from abc import abstractmethod
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from splinter.exceptions import ElementDoesNotExist
-from app import create_app
-from scrap_app.services import save_company_data
-from settings import ConfigBase
-
-logging.getLogger().setLevel(logging.INFO)
-
-
-BASE_URL = "http://www.example.com/"
+from rest_app.services import save_company_data
 
 
 class BaseScraper:
@@ -122,9 +114,9 @@ class BaseScraper:
         }
         return firefox_capabilities
 
-    # Create missing downloaded images and goal folders
     @staticmethod
     def _create_folder(folder):
+        # Create missing downloaded images and goal folders
         access_rights = 0o755
         try:
             if not os.path.exists(os.path.abspath(folder)):
@@ -132,11 +124,13 @@ class BaseScraper:
         except OSError:
             print("Create directory %s failed" % os.path.abspath(folder))
 
-    # Download html file needed page of site (not uses, only for test)
     @staticmethod
     def _html_to_file(self, html):
-        self._create_folder("./files")
-        with open(os.path.join("./files", "orders.html"), "w") as goal_file:
+        # Download html file needed page of site (not uses, only for test)
+        self._create_folder("files")
+        with open(
+            os.path.join(os.path.abspath("files"), "orders.html"), "w"
+        ) as goal_file:
             soup = BeautifulSoup(html, "lxml")
             content = soup.prettify(formatter="html5")
             goal_file.write(content)
@@ -179,7 +173,7 @@ class BaseScraper:
                 except ElementDoesNotExist:
                     print("Company {0} not found".format(company_name))
 
-    def _last_csv_to_json(self) -> json:
+    def _last_csv_to_json(self) -> list:
         list_files = glob.glob(os.path.join(self.config.DOWNLOAD_DIR_MACHINE, "*.csv"))
         latest_file = max(list_files, key=os.path.getctime)
         with open(latest_file, "r") as f:
@@ -187,69 +181,3 @@ class BaseScraper:
             json_array = [row for row in csv_reader]
             json_string = json.dumps(json_array, indent=4)
             return json_string
-
-
-class DockerScraper(BaseScraper):
-    def create_browser(self) -> Browser:
-        remote_server_url = "http://localhost:4444/wd/hub"
-        if self.config.BROWSER_NAME == "firefox":
-            firefox_preferences = self._browser_prefs(config=self.config)
-            browser = Browser(
-                driver_name="remote",
-                browser=self.config.BROWSER_NAME,
-                command_executor=remote_server_url,
-                keep_alive=True,
-                profile_preferences=firefox_preferences,
-            )
-            return browser
-        elif self.config.BROWSER_NAME == "chrome":
-            chrome_options = self._browser_options(
-                config=self.config, prefs=self._browser_prefs(config=self.config)
-            )
-            browser = Browser(
-                driver_name="remote",
-                browser=self.config.BROWSER_NAME,
-                command_executor=remote_server_url,
-                keep_alive=True,
-                options=chrome_options,
-            )
-            return browser
-        else:
-            print("Not implemented to this browser")
-            return None
-
-
-class BrowserScraper(BaseScraper):
-    def create_browser(self) -> Browser:
-        if self.config.BROWSER_NAME == "firefox":
-            firefox_preferences = self._browser_prefs(config=self.config)
-            browser = Browser(
-                self.config.BROWSER_NAME,
-                profile_preferences=firefox_preferences,
-                **self.config.EXECUTABLE_PATH
-            )
-            return browser
-        elif self.config.BROWSER_NAME == "chrome":
-            chrome_options = self._browser_options(
-                config=self.config, prefs=self._browser_prefs(config=self.config)
-            )
-            browser = Browser(self.config.BROWSER_NAME, options=chrome_options)
-            return browser
-        else:
-            print("Not implemented to this browser")
-            return None
-
-
-if __name__ == "__main__":
-    config = ConfigBase()
-    print(
-        "Scraping with {0}.{1}".format(config.SCRAPPER_TYPE_NAME, config.BROWSER_NAME)
-    )
-    if config.SCRAPPER_TYPE_NAME.lower() == "docker":
-        scraper = DockerScraper(config)
-    else:
-        scraper = BrowserScraper(config)
-    scrap_app = create_app()
-    with scrap_app.app_context():
-        scraper.fetch_data_for(company_names=config.COMPANY_NAMES)
-    print("Scraping done")

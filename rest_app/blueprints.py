@@ -1,5 +1,5 @@
 from flask import Blueprint
-from scrap_app import services
+from rest_app import services
 
 bp_rest = Blueprint("bp_rest", __name__)
 

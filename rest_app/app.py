@@ -1,8 +1,8 @@
 from flask import Flask
 from flask_migrate import Migrate
-from scrap_app.extensions import db
 from settings import ConfigBase
-from blueprints import bp_rest
+from .extensions import db
+from .blueprints import bp_rest
 
 
 def create_app() -> Flask:

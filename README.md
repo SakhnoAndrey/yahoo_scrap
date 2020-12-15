@@ -52,7 +52,7 @@ Remove volumes
 > docker-compose rm -v -f
 
 7. Scraping the data of the enterprises specified in ConfigBase.COMPANY_NAMES (settings.py)
-> python scrapping.py
+> python scraper.py
    
 8. Launching the REST service for obtaining information saved by the scrapper in the database
 > python manage.py 
