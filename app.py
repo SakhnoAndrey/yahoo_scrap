@@ -4,7 +4,7 @@ from scrap_app.extensions import db
 from settings import ConfigBase
 from scrapping import DockerScraper, BrowserScraper
 from scrap_app.models import Company
-from scrap_app.services import save_company_data
+import scrap_app.services as services
 
 scrap_app = Flask(__name__)
 config = ConfigBase()
@@ -21,7 +21,7 @@ def get_company_data(name):
     #     scraper = BrowserScraper(config)
     # json_data = scraper.fetch_data_for(company_name=name)
     # save_company_data(name=name, data=json_data)
-    return get_company_data(name=name)
+    return services.get_company_data(name=name)
 
 
 @scrap_app.shell_context_processor

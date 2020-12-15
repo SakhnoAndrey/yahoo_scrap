@@ -23,7 +23,7 @@ def save_company_data(name: str, data: json):
 
 
 def get_company_data(name: str):
-    company = Company.objects.filter_by(name=name).order_by("-created").first()
+    company = Company.query.filter_by(name=name).order_by("-created").first()
     if company:
         return company.data
     else:
