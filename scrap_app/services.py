@@ -10,7 +10,7 @@ def save_company_data(name: str, data: json):
     # company.data = data
     # db.session.add(company)
     # db.session.commit()
-    company = Company.objects.filter_by(name=name).first()
+    company = Company.query.filter_by(name=name).first()
     if company:
         company.data = data
         company.created = datetime.now().utcnow()
@@ -23,7 +23,9 @@ def save_company_data(name: str, data: json):
 
 
 def get_company_data(name: str):
-    company = Company.query.filter_by(name=name).order_by("-created").first()
+    company = (
+        Company.query.filter_by(name=name).order_by(Company.created.desc()).first()
+    )
     if company:
         return company.data
     else:
