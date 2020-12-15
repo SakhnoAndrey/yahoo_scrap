@@ -5,6 +5,7 @@ from datetime import datetime
 
 
 def save_company_data(name: str, data: json):
+    name = name.upper()
     company = Company.query.filter_by(name=name).first()
     if company:
         company.data = data
@@ -18,6 +19,7 @@ def save_company_data(name: str, data: json):
 
 
 def get_company_data(name: str):
+    name = name.upper()
     company = (
         Company.query.filter_by(name=name).order_by(Company.created.desc()).first()
     )
