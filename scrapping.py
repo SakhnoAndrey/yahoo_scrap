@@ -253,7 +253,7 @@ class BrowserScraper(BaseScraper):
 
 
 if __name__ == "__main__":
-    # config = ConfigBase()
+    config = ConfigBase()
     # scrap_app.config.from_object(config)
     # db.init_app(scrap_app)
     if config.SCRAPPER_TYPE_NAME.lower() == "docker":
